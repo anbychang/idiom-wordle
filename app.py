@@ -1,6 +1,5 @@
 import streamlit as st
 import random
-import datetime
 import json
 import os
 from pypinyin import pinyin, Style
@@ -42,6 +41,7 @@ def get_idiom_zhuyin(idiom):
 # ===== 樣式 =====
 st.markdown("""
 <style>
+    /* ===== 共用 ===== */
     .grid-container {
         display: flex;
         flex-direction: column;
@@ -61,12 +61,8 @@ st.markdown("""
         position: relative;
         border-radius: 4px;
     }
-    .cell-top {
-        height: 50%;
-    }
-    .cell-bottom {
-        height: 50%;
-    }
+    .cell-top { height: 50%; }
+    .cell-bottom { height: 50%; }
     .cell-char {
         position: absolute;
         top: 50%; left: 50%;
@@ -90,29 +86,57 @@ st.markdown("""
     .bg-present { background-color: #c9b458; }
     .bg-absent  { background-color: #787c7e; }
 
-    /* 手機 RWD */
-    @media (max-width: 500px) {
+    /* ===== 手機版 (≤ 768px) ===== */
+    @media (max-width: 768px) {
+        /* 把 Streamlit 預設 padding 壓到最小 */
+        .block-container {
+            padding-top: 0.5rem !important;
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+            max-width: 100% !important;
+        }
+        header[data-testid="stHeader"] {
+            display: none !important;
+        }
+
+        h1 {
+            font-size: 1.4rem !important;
+            text-align: center;
+            margin-bottom: 0.3rem !important;
+        }
+
+        /* 格子撐滿螢幕：(100vw - padding*2 - gap*3) / 4 */
         .cell-wrapper, .cell-empty {
-            width: 60px;
-            height: 60px;
+            width: calc((100vw - 1rem - 18px) / 4);
+            height: calc((100vw - 1rem - 18px) / 4);
+            max-width: 90px;
+            max-height: 90px;
         }
         .cell-char {
-            font-size: 1.5rem;
+            font-size: clamp(1.4rem, 5vw, 2.2rem);
         }
         .grid-row {
-            gap: 4px;
+            gap: 6px;
         }
         .grid-container {
-            gap: 4px;
+            gap: 6px;
+            margin: 8px auto 12px;
         }
-    }
-    @media (max-width: 360px) {
-        .cell-wrapper, .cell-empty {
-            width: 48px;
-            height: 48px;
+
+        /* 按鈕 & 輸入框加大方便觸控 */
+        .stButton > button {
+            min-height: 48px !important;
+            font-size: 1.1rem !important;
         }
-        .cell-char {
-            font-size: 1.2rem;
+        .stTextInput > div > div > input {
+            font-size: 1.3rem !important;
+            min-height: 48px !important;
+        }
+
+        /* 縮小 divider 間距 */
+        hr {
+            margin-top: 0.5rem !important;
+            margin-bottom: 0.5rem !important;
         }
     }
 </style>
@@ -121,21 +145,13 @@ st.markdown("""
 MAX_GUESSES = 6
 IDIOM_SET = ALL_IDIOMS
 
-# ===== 每日答案 =====
-def get_daily_idiom():
-    today = datetime.date.today()
-    seed = int(today.strftime("%Y%m%d"))
-    rng = random.Random(seed)
-    return rng.choice(ANSWER_POOL)
-
 # ===== 初始化 =====
 if "answer" not in st.session_state:
-    st.session_state.answer = get_daily_idiom()
+    st.session_state.answer = random.choice(ANSWER_POOL)
     st.session_state.guesses = []
     st.session_state.results = []
     st.session_state.game_over = False
     st.session_state.won = False
-    st.session_state.mode = "daily"
     st.session_state.hints_used = 0
 
 # ===== 檢查猜測（正確處理重複） =====
@@ -203,31 +219,6 @@ def render_grid():
 # ===== 標題 =====
 st.title("🀄 成語 Wordle")
 
-# ===== 模式切換 =====
-m1, m2 = st.columns(2)
-with m1:
-    if st.button("📅 每日挑戰", use_container_width=True,
-                 type="primary" if st.session_state.mode == "daily" else "secondary"):
-        st.session_state.mode = "daily"
-        st.session_state.answer = get_daily_idiom()
-        st.session_state.guesses = []
-        st.session_state.results = []
-        st.session_state.game_over = False
-        st.session_state.won = False
-        st.session_state.hints_used = 0
-        st.rerun()
-with m2:
-    if st.button("🎲 隨機模式", use_container_width=True,
-                 type="primary" if st.session_state.mode == "random" else "secondary"):
-        st.session_state.mode = "random"
-        st.session_state.answer = random.choice(ANSWER_POOL)
-        st.session_state.guesses = []
-        st.session_state.results = []
-        st.session_state.game_over = False
-        st.session_state.won = False
-        st.session_state.hints_used = 0
-        st.rerun()
-
 # ===== 格子 =====
 render_grid()
 
@@ -235,13 +226,13 @@ st.divider()
 
 # ===== 輸入區 =====
 if not st.session_state.game_over:
-    guess_input = st.text_input(
+    raw_input = st.text_input(
         "輸入四字成語",
-        max_chars=4,
         placeholder="輸入成語...",
         key=f"input_{len(st.session_state.guesses)}",
         label_visibility="collapsed"
     )
+    guess_input = raw_input.strip()[:4]
 
     b1, b2 = st.columns([3, 1])
     with b1:
@@ -303,23 +294,12 @@ if st.session_state.game_over:
     if hint:
         st.info(f"📖 **{st.session_state.answer}**：{hint}")
 
-    # 分享
-    emoji_map = {"correct": "🟩", "present": "🟨", "absent": "⬛"}
-    share = f"成語Wordle {'📅' if st.session_state.mode == 'daily' else '🎲'} "
-    share += f"{len(st.session_state.guesses) if st.session_state.won else 'X'}/{MAX_GUESSES}\n\n"
-    for result in st.session_state.results:
-        top = "".join(emoji_map[r[0]] for r in result)
-        bot = "".join(emoji_map[r[1]] for r in result)
-        share += f"{top}\n{bot}\n"
-    st.code(share, language=None)
-
     if st.button("🔄 再來一局", use_container_width=True, type="primary"):
         st.session_state.answer = random.choice(ANSWER_POOL)
         st.session_state.guesses = []
         st.session_state.results = []
         st.session_state.game_over = False
         st.session_state.won = False
-        st.session_state.mode = "random"
         st.session_state.hints_used = 0
         st.rerun()
 
