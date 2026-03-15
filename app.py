@@ -42,12 +42,18 @@ def get_idiom_zhuyin(idiom):
 st.markdown("""
 <style>
     /* ===== 共用 ===== */
+    .game-layout {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 32px;
+        margin: 10px auto 20px;
+    }
     .grid-container {
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 6px;
-        margin: 10px auto 20px;
     }
     .grid-row {
         display: flex;
@@ -89,21 +95,27 @@ st.markdown("""
     .bg-present { background-color: #c9b458; }
     .bg-absent  { background-color: #787c7e; }
 
-    /* 注音狀態表 */
-    .zhuyin-table {
+    .zhuyin-panel {
         display: flex;
-        flex-wrap: wrap;
+        gap: 12px;
+        padding-top: 4px;
+    }
+
+    /* 注音狀態表 - 直排，高度對齊格子 */
+    .zhuyin-table {
+        display: grid;
+        grid-auto-flow: column;
+        grid-template-rows: repeat(auto-fill, 32px);
+        height: 402px;
         gap: 4px;
-        justify-content: center;
-        margin: 4px auto;
     }
     .zhuyin-tag {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-width: 28px;
-        height: 28px;
-        padding: 0 6px;
+        width: 32px;
+        height: 32px;
+        padding: 0;
         border-radius: 3px;
         font-size: 1.05rem;
         font-weight: 600;
@@ -133,6 +145,13 @@ st.markdown("""
             font-size: 1.4rem !important;
             text-align: center;
             margin-bottom: 0.3rem !important;
+        }
+
+        /* 手機版上下排列 */
+        .game-layout {
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
         }
 
         /* 格子撐滿螢幕：(100vw - padding*2 - gap*3) / 4 */
@@ -169,21 +188,26 @@ st.markdown("""
             margin-bottom: 0.5rem !important;
         }
 
-        /* 注音狀態表縮小 */
+        /* 注音狀態表：手機改橫排 */
+        .zhuyin-panel {
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 4px;
+        }
+        .zhuyin-table {
+            grid-auto-flow: row;
+            grid-template-rows: none;
+            grid-template-columns: repeat(auto-fill, minmax(22px, 1fr));
+            gap: 3px;
+        }
         .zhuyin-tag {
             min-width: 22px;
             height: 22px;
             padding: 0 4px;
             font-size: 0.85rem;
         }
-        .zhuyin-table {
-            gap: 3px;
-        }
 
-        /* 讓 columns 不要浪費空間 */
-        [data-testid="stHorizontalBlock"] {
-            gap: 0 !important;
-        }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -239,9 +263,12 @@ def check_guess(guess, answer):
 
     return list(zip(init_statuses, final_statuses))
 
-# ===== 畫格子 =====
-def render_grid():
-    html = '<div class="grid-container">'
+# ===== 畫格子 + 注音狀態表 =====
+PRIORITY = {"correct": 2, "present": 1, "absent": 0}
+
+def render_game():
+    # --- 格子 ---
+    html = '<div class="game-layout"><div class="grid-container">'
     for i in range(MAX_GUESSES):
         html += '<div class="grid-row">'
         if i < len(st.session_state.guesses):
@@ -260,12 +287,8 @@ def render_grid():
                 html += '<div class="cell-empty"></div>'
         html += '</div>'
     html += '</div>'
-    st.markdown(html, unsafe_allow_html=True)
 
-# ===== 注音狀態表 =====
-PRIORITY = {"correct": 2, "present": 1, "absent": 0}
-
-def render_zhuyin_status():
+    # --- 注音狀態表 ---
     init_status = {}
     final_status = {}
     for guess, result in zip(st.session_state.guesses, st.session_state.results):
@@ -278,37 +301,33 @@ def render_zhuyin_status():
             if PRIORITY.get(fs_, 0) > PRIORITY.get(final_status.get(final, ""), -1):
                 final_status[final] = fs_
 
-    all_i = "ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙ"
-    all_f = ["ㄚ","ㄛ","ㄜ","ㄝ","ㄞ","ㄟ","ㄠ","ㄡ","ㄢ","ㄣ","ㄤ","ㄥ","ㄦ",
-             "ㄧ","ㄧㄚ","ㄧㄝ","ㄧㄠ","ㄧㄡ","ㄧㄢ","ㄧㄣ","ㄧㄤ","ㄧㄥ",
-             "ㄨ","ㄨㄚ","ㄨㄛ","ㄨㄞ","ㄨㄟ","ㄨㄢ","ㄨㄣ","ㄨㄤ","ㄨㄥ",
-             "ㄩ","ㄩㄝ","ㄩㄢ","ㄩㄣ","ㄩㄥ"]
+    all_initials = list("ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙ") + ["∅"]
+    all_finals = ["ㄚ","ㄛ","ㄜ","ㄝ","ㄞ","ㄟ","ㄠ","ㄡ","ㄢ","ㄣ","ㄤ","ㄥ","ㄦ",
+                  "ㄧ","ㄧㄚ","ㄧㄝ","ㄧㄠ","ㄧㄡ","ㄧㄢ","ㄧㄣ","ㄧㄤ","ㄧㄥ",
+                  "ㄨ","ㄨㄚ","ㄨㄛ","ㄨㄞ","ㄨㄟ","ㄨㄢ","ㄨㄣ","ㄨㄤ","ㄨㄥ",
+                  "ㄩ","ㄩㄝ","ㄩㄢ","ㄩㄣ","ㄩㄥ","∅"]
 
-    html = '<div style="text-align:center;margin:8px 0;">'
+    html += '<div class="zhuyin-panel">'
+    # 聲母
     html += '<div class="zhuyin-table">'
-    for c in all_i:
-        cls = f"zt-{init_status[c]}" if c in init_status else "zt-unknown"
+    for c in all_initials:
+        cls = f"zt-{init_status.get(c, '')}" if c in init_status else "zt-unknown"
         html += f'<span class="zhuyin-tag {cls}">{c}</span>'
-    cls_i = f"zt-{init_status['∅']}" if "∅" in init_status else "zt-unknown"
-    html += f'<span class="zhuyin-tag {cls_i}">∅</span>'
     html += '</div>'
 
-    html += '<div class="zhuyin-table" style="margin-top:4px;">'
-    for c in all_f:
-        cls = f"zt-{final_status[c]}" if c in final_status else "zt-unknown"
+    # 韻母
+    html += '<div class="zhuyin-table">'
+    for c in all_finals:
+        cls = f"zt-{final_status.get(c, '')}" if c in final_status else "zt-unknown"
         sz = ' style="font-size:0.75rem;"' if len(c) > 1 else ""
         html += f'<span class="zhuyin-tag {cls}"{sz}>{c}</span>'
-    cls_f = f"zt-{final_status['∅']}" if "∅" in final_status else "zt-unknown"
-    html += f'<span class="zhuyin-tag {cls_f}">∅</span>'
+    html += '</div>'
     html += '</div></div>'
     st.markdown(html, unsafe_allow_html=True)
 
-# ===== 置中容器 =====
-col_l, col_c, col_r = st.columns([1, 2, 1])
-with col_c:
-    st.title("🀄 成語 Wordle")
-    render_grid()
-    render_zhuyin_status()
+# ===== 主畫面 =====
+st.markdown("<h1 style='text-align:center;'>🀄 成語 Wordle</h1>", unsafe_allow_html=True)
+render_game()
 
 _l, _c, _r = st.columns([1, 2, 1])
 with _c:
