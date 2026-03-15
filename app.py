@@ -109,8 +109,8 @@ st.markdown("""
         .cell-wrapper, .cell-empty {
             width: calc((100vw - 1rem - 18px) / 4);
             height: calc((100vw - 1rem - 18px) / 4);
-            max-width: 90px;
-            max-height: 90px;
+            max-width: 72px;
+            max-height: 72px;
         }
         .cell-char {
             font-size: clamp(1.4rem, 5vw, 2.2rem);
