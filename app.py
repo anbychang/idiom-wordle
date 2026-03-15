@@ -222,8 +222,6 @@ st.title("🀄 成語 Wordle")
 # ===== 格子 =====
 render_grid()
 
-st.divider()
-
 # ===== 輸入區 =====
 if not st.session_state.game_over:
     raw_input = st.text_input(
@@ -234,11 +232,7 @@ if not st.session_state.game_over:
     )
     guess_input = raw_input.strip()[:4]
 
-    b1, b2 = st.columns([3, 1])
-    with b1:
-        submitted = st.button("確認", use_container_width=True, type="primary")
-    with b2:
-        hint_btn = st.button("💡 提示", use_container_width=True)
+    hint_btn = st.button("💡 提示", use_container_width=True)
 
     if hint_btn:
         answer = st.session_state.answer
@@ -253,10 +247,9 @@ if not st.session_state.game_over:
             st.info(f"**{answer[0]}＿{answer[2]}＿**")
         st.session_state.hints_used += 1
 
-    if submitted:
-        if not guess_input:
-            st.warning("請輸入成語")
-        elif len(guess_input) != 4:
+    # 按 Enter 自動送出
+    if guess_input:
+        if len(guess_input) != 4:
             st.warning("請輸入四個字")
         elif guess_input not in IDIOM_SET:
             st.warning("不在成語庫中")
@@ -275,7 +268,6 @@ if not st.session_state.game_over:
 
 # ===== 遊戲結束 =====
 if st.session_state.game_over:
-    st.divider()
     if st.session_state.won:
         tries = len(st.session_state.guesses)
         if tries == 1:
