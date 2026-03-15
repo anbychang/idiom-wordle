@@ -147,29 +147,35 @@ st.markdown("""
             margin-bottom: 0.3rem !important;
         }
 
-        /* 手機版上下排列 */
+        /* 格子固定 44px */
+        .cell-wrapper, .cell-empty {
+            width: 44px !important;
+            height: 44px !important;
+        }
+        .cell-char {
+            font-size: 1.1rem;
+        }
+        .grid-row {
+            gap: 4px;
+        }
+        .grid-container {
+            gap: 4px;
+        }
         .game-layout {
-            flex-direction: column;
-            align-items: center;
             gap: 12px;
         }
 
-        /* 格子撐滿螢幕：(100vw - padding*2 - gap*3) / 4 */
-        .cell-wrapper, .cell-empty {
-            width: calc((100vw - 1rem - 18px) / 4);
-            height: calc((100vw - 1rem - 18px) / 4);
-            max-width: 44px;
-            max-height: 44px;
+        /* 注音等比縮小 */
+        .zhuyin-table {
+            height: 280px !important;
         }
-        .cell-char {
-            font-size: clamp(1rem, 3.5vw, 1.4rem);
+        .zhuyin-tag {
+            width: 22px;
+            height: 22px;
+            font-size: 0.75rem;
         }
-        .grid-row {
+        .zhuyin-panel {
             gap: 6px;
-        }
-        .grid-container {
-            gap: 6px;
-            margin: 8px auto 12px;
         }
 
         /* 按鈕 & 輸入框加大方便觸控 */
@@ -180,32 +186,6 @@ st.markdown("""
         .stTextInput > div > div > input {
             font-size: 1.3rem !important;
             min-height: 48px !important;
-        }
-
-        /* 縮小 divider 間距 */
-        hr {
-            margin-top: 0.5rem !important;
-            margin-bottom: 0.5rem !important;
-        }
-
-        /* 注音狀態表：手機改橫排 */
-        .zhuyin-panel {
-            flex-direction: row;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 4px;
-        }
-        .zhuyin-table {
-            grid-auto-flow: row;
-            grid-template-rows: none;
-            grid-template-columns: repeat(auto-fill, minmax(22px, 1fr));
-            gap: 3px;
-        }
-        .zhuyin-tag {
-            min-width: 22px;
-            height: 22px;
-            padding: 0 4px;
-            font-size: 0.85rem;
         }
 
     }
