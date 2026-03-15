@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+idioms_raw.json
+dict.json.xz
