@@ -139,11 +139,11 @@ st.markdown("""
         .cell-wrapper, .cell-empty {
             width: calc((100vw - 1rem - 18px) / 4);
             height: calc((100vw - 1rem - 18px) / 4);
-            max-width: 72px;
-            max-height: 72px;
+            max-width: 44px;
+            max-height: 44px;
         }
         .cell-char {
-            font-size: clamp(1.4rem, 5vw, 2.2rem);
+            font-size: clamp(1rem, 3.5vw, 1.4rem);
         }
         .grid-row {
             gap: 6px;
