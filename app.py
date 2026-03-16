@@ -261,7 +261,7 @@ def render_game():
     html += '<div class="zhuyin-table" style="grid-template-rows:repeat(11,clamp(22px,3vw,32px));">'
     for c in all_finals:
         cls = f"zt-{final_status.get(c, '')}" if c in final_status else "zt-unknown"
-        sz = ' style="font-size:0.75rem;"' if len(c) > 1 else ""
+        sz = ' style="font-size:clamp(0.5rem,0.7vw,0.75rem);white-space:nowrap;"' if len(c) > 1 else ""
         html += f'<span class="zhuyin-tag {cls}"{sz}>{c}</span>'
     html += '</div>'
     html += '</div></div>'
