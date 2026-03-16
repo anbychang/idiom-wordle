@@ -106,7 +106,7 @@ st.markdown("""
         display: grid;
         grid-auto-flow: column;
         grid-template-rows: repeat(auto-fill, clamp(22px, 3vw, 32px));
-        height: clamp(230px, 33vw, 402px);
+        height: clamp(350px, 50vw, 402px);
         gap: clamp(3px, 0.4vw, 4px);
     }
     .zhuyin-tag {
