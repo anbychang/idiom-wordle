@@ -61,8 +61,8 @@ st.markdown("""
         gap: clamp(4px, 0.5vw, 6px);
     }
     .cell-wrapper {
-        width: clamp(44px, 6vw, 62px);
-        height: clamp(44px, 6vw, 62px);
+        width: clamp(36px, 5.5vw, 62px);
+        height: clamp(36px, 5.5vw, 62px);
         overflow: hidden;
         position: relative;
         border-radius: 4px;
@@ -75,7 +75,7 @@ st.markdown("""
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: clamp(1.1rem, 1.5vw, 1.5rem);
+        font-size: clamp(0.95rem, 1.4vw, 1.5rem);
         font-weight: 700;
         color: #ffffff;
         z-index: 2;
@@ -85,11 +85,11 @@ st.markdown("""
         line-height: 1;
     }
     .cell-empty {
-        width: clamp(44px, 6vw, 62px);
-        height: clamp(44px, 6vw, 62px);
+        width: clamp(36px, 5.5vw, 62px);
+        height: clamp(36px, 5.5vw, 62px);
         border: 2px solid #d3d6da;
         border-radius: 4px;
-        background-color: #ffffff;
+        background-color: transparent;
     }
     .bg-correct { background-color: #6aaa64; }
     .bg-present { background-color: #c9b458; }
@@ -106,7 +106,7 @@ st.markdown("""
         display: grid;
         grid-auto-flow: column;
         grid-template-rows: repeat(auto-fill, clamp(22px, 3vw, 32px));
-        height: clamp(280px, 38vw, 402px);
+        height: clamp(230px, 33vw, 402px);
         gap: clamp(3px, 0.4vw, 4px);
     }
     .zhuyin-tag {
