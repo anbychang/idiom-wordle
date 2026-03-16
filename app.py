@@ -257,8 +257,8 @@ def render_game():
         html += f'<span class="zhuyin-tag {cls}">{c}</span>'
     html += '</div>'
 
-    # 韻母：9行 × 4欄
-    html += '<div class="zhuyin-table" style="grid-template-rows:repeat(9,clamp(22px,3vw,32px));">'
+    # 韻母：11行 × 4欄（36個，最後一欄3個）
+    html += '<div class="zhuyin-table" style="grid-template-rows:repeat(11,clamp(22px,3vw,32px));">'
     for c in all_finals:
         cls = f"zt-{final_status.get(c, '')}" if c in final_status else "zt-unknown"
         sz = ' style="font-size:0.75rem;"' if len(c) > 1 else ""
