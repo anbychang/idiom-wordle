@@ -101,12 +101,10 @@ st.markdown("""
         padding-top: 4px;
     }
 
-    /* 注音狀態表 - 直排，高度對齊格子 */
+    /* 注音狀態表 - 直排 */
     .zhuyin-table {
         display: grid;
         grid-auto-flow: column;
-        grid-template-rows: repeat(auto-fill, clamp(22px, 3vw, 32px));
-        height: clamp(350px, 50vw, 402px);
         gap: clamp(3px, 0.4vw, 4px);
     }
     .zhuyin-tag {
@@ -252,15 +250,15 @@ def render_game():
                   "ㄩ","ㄩㄝ","ㄩㄢ","ㄩㄣ","ㄩㄥ","∅"]
 
     html += '<div class="zhuyin-panel">'
-    # 聲母
-    html += '<div class="zhuyin-table">'
+    # 聲母：11行 × 2欄
+    html += '<div class="zhuyin-table" style="grid-template-rows:repeat(11,clamp(22px,3vw,32px));">'
     for c in all_initials:
         cls = f"zt-{init_status.get(c, '')}" if c in init_status else "zt-unknown"
         html += f'<span class="zhuyin-tag {cls}">{c}</span>'
     html += '</div>'
 
-    # 韻母
-    html += '<div class="zhuyin-table">'
+    # 韻母：9行 × 4欄
+    html += '<div class="zhuyin-table" style="grid-template-rows:repeat(9,clamp(22px,3vw,32px));">'
     for c in all_finals:
         cls = f"zt-{final_status.get(c, '')}" if c in final_status else "zt-unknown"
         sz = ' style="font-size:0.75rem;"' if len(c) > 1 else ""
