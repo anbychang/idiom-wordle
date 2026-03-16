@@ -41,28 +41,28 @@ def get_idiom_zhuyin(idiom):
 # ===== 樣式 =====
 st.markdown("""
 <style>
-    /* ===== 共用 ===== */
+    /* ===== 響應式尺寸 ===== */
     .game-layout {
         display: flex;
         justify-content: center;
         align-items: flex-start;
-        gap: 32px;
+        gap: clamp(12px, 3vw, 32px);
         margin: 10px auto 20px;
     }
     .grid-container {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 6px;
+        gap: clamp(4px, 0.5vw, 6px);
     }
     .grid-row {
         display: flex;
         justify-content: center;
-        gap: 6px;
+        gap: clamp(4px, 0.5vw, 6px);
     }
     .cell-wrapper {
-        width: 62px;
-        height: 62px;
+        width: clamp(44px, 6vw, 62px);
+        height: clamp(44px, 6vw, 62px);
         overflow: hidden;
         position: relative;
         border-radius: 4px;
@@ -75,7 +75,7 @@ st.markdown("""
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
+        font-size: clamp(1.1rem, 1.5vw, 1.5rem);
         font-weight: 700;
         color: #ffffff;
         z-index: 2;
@@ -85,8 +85,8 @@ st.markdown("""
         line-height: 1;
     }
     .cell-empty {
-        width: 62px;
-        height: 62px;
+        width: clamp(44px, 6vw, 62px);
+        height: clamp(44px, 6vw, 62px);
         border: 2px solid #d3d6da;
         border-radius: 4px;
         background-color: #ffffff;
@@ -97,7 +97,7 @@ st.markdown("""
 
     .zhuyin-panel {
         display: flex;
-        gap: 12px;
+        gap: clamp(6px, 1vw, 12px);
         padding-top: 4px;
     }
 
@@ -105,19 +105,19 @@ st.markdown("""
     .zhuyin-table {
         display: grid;
         grid-auto-flow: column;
-        grid-template-rows: repeat(auto-fill, 32px);
-        height: 402px;
-        gap: 4px;
+        grid-template-rows: repeat(auto-fill, clamp(22px, 3vw, 32px));
+        height: clamp(280px, 38vw, 402px);
+        gap: clamp(3px, 0.4vw, 4px);
     }
     .zhuyin-tag {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 32px;
-        height: 32px;
+        width: clamp(22px, 3vw, 32px);
+        height: clamp(22px, 3vw, 32px);
         padding: 0;
         border-radius: 3px;
-        font-size: 1.05rem;
+        font-size: clamp(0.75rem, 1vw, 1.05rem);
         font-weight: 600;
         color: #fff;
         font-family: 'Noto Sans TC', sans-serif;
@@ -130,7 +130,6 @@ st.markdown("""
 
     /* ===== 手機版 (≤ 768px) ===== */
     @media (max-width: 768px) {
-        /* 把 Streamlit 預設 padding 壓到最小 */
         .block-container {
             padding-top: 0.5rem !important;
             padding-left: 0.5rem !important;
@@ -140,45 +139,11 @@ st.markdown("""
         header[data-testid="stHeader"] {
             display: none !important;
         }
-
         h1 {
             font-size: 1.4rem !important;
             text-align: center;
             margin-bottom: 0.3rem !important;
         }
-
-        /* 格子固定 44px */
-        .cell-wrapper, .cell-empty {
-            width: 44px !important;
-            height: 44px !important;
-        }
-        .cell-char {
-            font-size: 1.1rem;
-        }
-        .grid-row {
-            gap: 4px;
-        }
-        .grid-container {
-            gap: 4px;
-        }
-        .game-layout {
-            gap: 12px;
-        }
-
-        /* 注音等比縮小 */
-        .zhuyin-table {
-            height: 280px !important;
-        }
-        .zhuyin-tag {
-            width: 22px;
-            height: 22px;
-            font-size: 0.75rem;
-        }
-        .zhuyin-panel {
-            gap: 6px;
-        }
-
-        /* 按鈕 & 輸入框加大方便觸控 */
         .stButton > button {
             min-height: 48px !important;
             font-size: 1.1rem !important;
@@ -187,7 +152,6 @@ st.markdown("""
             font-size: 1.3rem !important;
             min-height: 48px !important;
         }
-
     }
 </style>
 """, unsafe_allow_html=True)
