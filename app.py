@@ -97,7 +97,7 @@ st.markdown("""
 
     .zhuyin-panel {
         display: flex;
-        gap: 8px;
+        gap: clamp(4px, 0.8vw, 12px);
         padding-top: 4px;
     }
 
@@ -105,14 +105,14 @@ st.markdown("""
     .zhuyin-table {
         display: grid;
         grid-auto-flow: column;
-        gap: 3px;
+        gap: clamp(2px, 0.3vw, 4px);
     }
     .zhuyin-tag {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 28px;
-        height: 28px;
+        width: clamp(22px, 3vw, 32px);
+        height: clamp(22px, 3vw, 32px);
         padding: 0;
         border-radius: 3px;
         font-size: clamp(0.75rem, 1vw, 1.05rem);
@@ -251,14 +251,14 @@ def render_game():
 
     html += '<div class="zhuyin-panel">'
     # 聲母：11行 × 2欄
-    html += '<div class="zhuyin-table" style="grid-template-rows:repeat(11,28px);">'
+    html += '<div class="zhuyin-table" style="grid-template-rows:repeat(11,clamp(22px,3vw,32px));">'
     for c in all_initials:
         cls = f"zt-{init_status.get(c, '')}" if c in init_status else "zt-unknown"
         html += f'<span class="zhuyin-tag {cls}">{c}</span>'
     html += '</div>'
 
     # 韻母：11行 × 4欄（36個，最後一欄3個）
-    html += '<div class="zhuyin-table" style="grid-template-rows:repeat(11,28px);">'
+    html += '<div class="zhuyin-table" style="grid-template-rows:repeat(11,clamp(22px,3vw,32px));">'
     for c in all_finals:
         cls = f"zt-{final_status.get(c, '')}" if c in final_status else "zt-unknown"
         sz = ' style="font-size:0.75rem;"' if len(c) > 1 else ""
