@@ -150,6 +150,15 @@ st.markdown("""
             font-size: 1.3rem !important;
             min-height: 48px !important;
         }
+        /* 隱藏 Streamlit 手機浮動輸入框 */
+        [data-testid="stBottomBlockContainer"] {
+            display: none !important;
+        }
+        /* 壓縮元素之間的間距 */
+        .stElementContainer, .stColumn {
+            margin-bottom: 0 !important;
+            padding-bottom: 0 !important;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -331,24 +340,23 @@ with _c:
             st.session_state.hints_used = 0
             st.rerun()
 
-_l2, _c2, _r2 = st.columns([1, 2, 1])
-with _c2.expander("ℹ️ 說明 / 提示"):
-    st.markdown(f"""
+    with st.expander("ℹ️ 說明 / 提示"):
+        st.markdown(f"""
 **玩法**：輸入四字成語，每格上半=聲母、下半=韻母。
 🟩 正確位置 / 🟨 有但位置錯 / ⬛ 沒有，共 **6** 次機會。
 
 出題 **{len(ANSWER_POOL):,}** 個 / 可猜 **{len(ALL_IDIOMS):,}** 個
-    """)
-    if not st.session_state.game_over:
-        if st.button("💡 給我提示"):
-            answer = st.session_state.answer
-            h = st.session_state.hints_used
-            if h == 0:
-                st.info(f"第一個字：**{answer[0]}**")
-            elif h == 1:
-                st.info(f"最後一個字：**{answer[3]}**")
-            elif h == 2:
-                st.info(f"第二個字：**{answer[1]}**")
-            else:
-                st.info(f"**{answer[0]}＿{answer[2]}＿**")
-            st.session_state.hints_used += 1
+        """)
+        if not st.session_state.game_over:
+            if st.button("💡 給我提示"):
+                answer = st.session_state.answer
+                h = st.session_state.hints_used
+                if h == 0:
+                    st.info(f"第一個字：**{answer[0]}**")
+                elif h == 1:
+                    st.info(f"最後一個字：**{answer[3]}**")
+                elif h == 2:
+                    st.info(f"第二個字：**{answer[1]}**")
+                else:
+                    st.info(f"**{answer[0]}＿{answer[2]}＿**")
+                st.session_state.hints_used += 1
