@@ -163,7 +163,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-MAX_GUESSES = 6
+MAX_GUESSES = 8
 IDIOM_SET = ALL_IDIOMS
 
 # ===== 初始化 =====
